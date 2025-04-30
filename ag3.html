@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>AG3 - Inserisci Minuti</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e9f5ec, #f8fbf9);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 15px;
+      color: #2e7d32;
+      font-size: 22px;
+      letter-spacing: 1px;
+    }
+
+    .input-field {
+      margin: 10px 0;
+    }
+
+    label {
+      font-size: 14px;
+      margin-right: 8px;
+    }
+
+    input[type="text"], input[type="number"] {
+      padding: 5px;
+      width: 180px;
+      font-size: 13px;
+      border: 1.5px solid #ccc;
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #2e7d32;
+      color: white;
+      text-transform: uppercase;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #d0e9d2;
+    }
+
+    input.minuti {
+      width: 60px;
+      font-size: 12px;
+      padding: 4px;
+      text-align: center;
+    }
+
+    .btn {
+      margin-top: 20px;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 8px 20px;
+      font-size: 15px;
+      border-radius: 8px;
+      transition: 0.3s;
+      box-shadow: 0px 3px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #45a049;
+      transform: translateY(-2px);
+    }
+
+    .nav-buttons {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .nav-buttons a {
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: 0.3s;
+      display: inline-block;
+      box-shadow: 0px 3px 6px rgba(0,0,0,0.2);
+    }
+
+    .indietro {
+      background-color: #e53935;
+      color: white;
+    }
+
+    .avanti {
+      background-color: #43a047;
+      color: white;
+    }
+
+    .home {
+      background-color: #fdd835;
+      color: black;
+    }
+
+    .nav-buttons a:hover {
+      opacity: 0.8;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Inserisci Minuti per ogni Giocatore</h1>
+
+    <div class="input-field">
+      <label for="squadraAvversaria">Squadra Avversaria:</label><br>
+      <input type="text" id="squadraAvversaria" placeholder="Es: Firenze FC">
+    </div>
+
+    <div class="input-field">
+      <label for="golFiesole">Gol Fiesole:</label><br>
+      <input type="number" id="golFiesole" min="0" placeholder="Es: 2">
+    </div>
+
+    <div class="input-field">
+      <label for="golAvversari">Gol Avversari:</label><br>
+      <input type="number" id="golAvversari" min="0" placeholder="Es: 1">
+    </div>
+
+    <table id="convocatiTable">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Cognome</th>
+          <th>Ruolo</th>
+          <th>1° Tempo</th>
+          <th>2° Tempo</th>
+          <th>3° Tempo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Giocatori caricati dinamicamente -->
+      </tbody>
+    </table>
+
+    <button id="saveMinuti" class="btn">💾 Salva Minuti</button>
+
+    <div class="nav-buttons">
+      <a href="ag2.html" class="indietro">⬅️ Indietro</a>
+      <a href="ag5.html" class="avanti">➡️ Avanti</a>
+      <a href="index.html" class="home" onclick="return confirm('⚠️ Tornerai alla home. Tutte le modifiche non salvate andranno perse. Continuare?')">🏠 Home</a>
+    </div>
+  </div>
+
+  <script>
+    function caricaConvocati() {
+      const convocati = JSON.parse(localStorage.getItem('convocati')) || [];
+      const tableBody = document.getElementById('convocatiTable').querySelector('tbody');
+      tableBody.innerHTML = '';
+
+      convocati.forEach((g, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${g.nome}</td>
+          <td>${g.cognome}</td>
+          <td>${g.ruolo}</td>
+          <td><input class="minuti" type="number" id="minuti1-${index}" min="0" max="50" value="0"></td>
+          <td><input class="minuti" type="number" id="minuti2-${index}" min="0" max="50" value="0"></td>
+          <td><input class="minuti" type="number" id="minuti3-${index}" min="0" max="50" value="0"></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    document.getElementById('saveMinuti').addEventListener('click', function() {
+      const convocati = JSON.parse(localStorage.getItem('convocati')) || [];
+      const nuovaLista = convocati.map((g, index) => {
+        const m1 = parseInt(document.getElementById(`minuti1-${index}`).value) || 0;
+        const m2 = parseInt(document.getElementById(`minuti2-${index}`).value) || 0;
+        const m3 = parseInt(document.getElementById(`minuti3-${index}`).value) || 0;
+        const minutiTotali = m1 + m2 + m3;
+        return {
+          nome: g.nome,
+          cognome: g.cognome,
+          ruolo: g.ruolo,
+          minuti1: m1,
+          minuti2: m2,
+          minuti3: m3,
+          minutiUltimaPartita: minutiTotali
+        };
+      });
+
+      localStorage.setItem('minuti', JSON.stringify(nuovaLista));
+      localStorage.setItem('squadraAvversaria', document.getElementById('squadraAvversaria').value);
+      localStorage.setItem('golFiesole', document.getElementById('golFiesole').value);
+      localStorage.setItem('golAvversari', document.getElementById('golAvversari').value);
+
+      alert('✅ Minuti e risultato salvati correttamente!');
+    });
+
+    caricaConvocati();
+  </script>
+
+</body>
+</html>

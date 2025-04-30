@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Presenze - Riepilogo Partita</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Stile simile a quello di ag5 */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e9f5ec, #f8fbf9);
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 15px;
+      color: #2e7d32;
+      font-size: 22px;
+    }
+    .result {
+      font-size: 16px;
+      margin: 10px 0 20px 0;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #2e7d32;
+      color: white;
+      text-transform: uppercase;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #d0e9d2;
+    }
+    .nav-buttons {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+    .nav-buttons button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0px 3px 6px rgba(0,0,0,0.2);
+    }
+    .salva {
+      background-color: #43a047;
+      color: white;
+    }
+    .home {
+      background-color: #ffa000;
+      color: white;
+    }
+    .nav-buttons button:hover {
+      opacity: 0.8;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Presenze della Partita</h1>
+
+    <div class="result" id="risultatoPartita">
+      <!-- Risultato della partita visualizzato qui -->
+    </div>
+
+    <table id="presenzeTable">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Cognome</th>
+          <th>Ruolo</th>
+          <th>Minuti Totali</th>
+          <th>Azioni</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dati verranno caricati qui -->
+      </tbody>
+    </table>
+
+    <div class="nav-buttons">
+      <button class="home" onclick="location.href='index.html'">🏠 Home</button>
+      <button class="salva" onclick="exportToCSV()">💾 Esporta CSV</button>
+    </div>
+  </div>
+
+  <script>
+    function caricaPresenze() {
+      const datiFinali = JSON.parse(localStorage.getItem('presenzeFinali')) || {};
+      const risultatoPartita = datiFinali.risultato || 'Partita non salvata';
+      const presenze = datiFinali.presenze || [];
+
+      // Mostra risultato della partita
+      document.getElementById('risultatoPartita').textContent = risultatoPartita;
+
+      const tbody = document.getElementById('presenzeTable').querySelector('tbody');
+      tbody.innerHTML = '';
+
+      // Aggiungi i giocatori alla tabella
+      presenze.forEach((giocatore, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${giocatore.nome}</td>
+          <td>${giocatore.cognome}</td>
+          <td>${giocatore.ruolo}</td>
+          <td>${giocatore.totale}</td>
+          <td>
+            <button onclick="modificaMinuti(${index})">✏️</button>
+            <button onclick="resetMinuti(${index})">🔄</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function modificaMinuti(index) {
+      const presenze = JSON.parse(localStorage.getItem('presenzeFinali')).presenze || [];
+      const giocatore = presenze[index];
+      const nuoviMinuti = prompt(`Modifica i minuti per ${giocatore.nome} ${giocatore.cognome}:`, giocatore.totale);
+      if (nuoviMinuti !== null) {
+        giocatore.totale = parseInt(nuoviMinuti) || 0;
+        localStorage.setItem('presenzeFinali', JSON.stringify({ ...presenze, presenze }));
+        caricaPresenze();
+      }
+    }
+
+    function resetMinuti(index) {
+      const presenze = JSON.parse(localStorage.getItem('presenzeFinali')).presenze || [];
+      presenze[index].totale = 0;
+      localStorage.setItem('presenzeFinali', JSON.stringify({ ...presenze, presenze }));
+      caricaPresenze();
+    }
+
+    function exportToCSV() {
+      const datiFinali = JSON.parse(localStorage.getItem('presenzeFinali')) || {};
+      const presenze = datiFinali.presenze || [];
+      const risultato = datiFinali.risultato || 'Partita non salvata';
+
+      const oggi = new Date();
+      const yyyy = oggi.getFullYear();
+      const mm = String(oggi.getMonth() + 1).padStart(2, '0');
+      const dd = String(oggi.getDate()).padStart(2, '0');
+      const dataStr = `${yyyy}-${mm}-${dd}`;
+
+      const csvRows = [];
+      csvRows.push(`Risultato:,${risultato}`);
+      csvRows.push('');
+      csvRows.push(['Nome', 'Cognome', 'Ruolo', 'Minuti Totali'].join(','));
+
+      presenze.forEach(g => {
+        csvRows.push([g.nome, g.cognome, g.ruolo, g.totale].join(','));
+      });
+
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `presenze_${dataStr}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.onload = caricaPresenze;
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>AG2 - Seleziona Convocati</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #e0fce0, #d5f5e3);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 50px auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 25px;
+      color: #2e7d32;
+      font-size: 30px;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    th {
+      background-color: #2e7d32;
+      color: white;
+      text-transform: uppercase;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f0f0f0;
+    }
+
+    tr:hover {
+      background-color: #d0e9d2;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.3);
+      cursor: pointer;
+    }
+
+    .btn {
+      margin-top: 30px;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 14px 28px;
+      font-size: 17px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn:hover {
+      background-color: #388e3c;
+      transform: scale(1.05);
+    }
+
+    .nav-buttons {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .nav-buttons a {
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      color: white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      transition: 0.3s;
+    }
+
+    .indietro {
+      background-color: #e53935;
+    }
+
+    .avanti {
+      background-color: #43a047;
+    }
+
+    .home {
+      background-color: #fdd835;
+      color: black;
+    }
+
+    .nav-buttons a:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>Seleziona i Convocati</h1>
+
+    <table id="giocatoriTable">
+      <thead>
+        <tr>
+          <th>Convocato</th>
+          <th>Cognome</th>
+          <th>Nome</th>
+          <th>Ruolo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Giocatori caricati dinamicamente -->
+      </tbody>
+    </table>
+
+    <button id="saveConvocati" class="btn">💾 Salva Convocati</button>
+
+    <div class="nav-buttons">
+      <a href="ag1.html" class="indietro">⬅️ Indietro</a>
+      <a href="ag3.html" class="avanti">➡️ Avanti</a>
+      <a href="index.html" class="home">🏠 Home</a>
+    </div>
+  </div>
+
+  <script>
+    function caricaGiocatori() {
+      const giocatori = JSON.parse(localStorage.getItem('giocatori')) || [];
+      const tableBody = document.getElementById('giocatoriTable').querySelector('tbody');
+      tableBody.innerHTML = '';
+
+      giocatori.forEach((g, index) => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+          <td><input type="checkbox" id="convocato-${index}"></td>
+          <td>${g.cognome}</td>
+          <td>${g.nome}</td>
+          <td>${g.ruolo}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    document.getElementById('saveConvocati').addEventListener('click', function() {
+      const giocatori = JSON.parse(localStorage.getItem('giocatori')) || [];
+      const convocati = giocatori.filter((_, index) => {
+        return document.getElementById(`convocato-${index}`).checked;
+      });
+
+      localStorage.setItem('convocati', JSON.stringify(convocati));
+      alert('✅ Convocati salvati!');
+    });
+
+    caricaGiocatori();
+  </script>
+
+</body>
+</html>

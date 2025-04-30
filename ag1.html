@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Carica Giocatori - Fiesole Calcio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #e0ffe0, #c4f0c5);
+      color: #004d26;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 30px;
+    }
+
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .input-file {
+      font-size: 1em;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      font-size: 1em;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn.primary {
+      background-color: #2e7d32;
+      color: white;
+    }
+
+    .btn.primary:hover {
+      background-color: #1b5e20;
+      transform: scale(1.05);
+    }
+
+    .btn.home {
+      background-color: #ffeb3b;
+      color: black;
+    }
+
+    .btn.home:hover {
+      background-color: #fdd835;
+      transform: scale(1.05);
+    }
+
+    .btn.avanti {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .btn.avanti:hover {
+      background-color: #388e3c;
+      transform: scale(1.05);
+    }
+
+    .nav-buttons {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>📥 Carica File Giocatori</h1>
+  <input type="file" id="fileInput" class="input-file"><br>
+  <button class="btn primary" onclick="salvaGiocatori()">Salva Giocatori</button>
+</div>
+
+<div class="nav-buttons">
+  <a href="index.html" class="btn home">🏠 Home</a>
+  <a href="#" class="btn avanti" onclick="vaiAvanti()">➡️ Avanti</a>
+</div>
+
+<script>
+let giocatori = [];
+
+function salvaGiocatori() {
+    const file = document.getElementById('fileInput').files[0];
+    if (!file) {
+        alert("❌ Seleziona un file prima di salvare!");
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const lines = e.target.result.split('\n').filter(line => line.trim() !== '');
+        giocatori = lines.map(line => {
+            const [nome, cognome, ruolo] = line.split(',').map(x => x.trim());
+            return { nome, cognome, ruolo };
+        });
+        localStorage.setItem('giocatori', JSON.stringify(giocatori));
+        alert("✅ Giocatori salvati!");
+    }
+    reader.readAsText(file);
+}
+
+function vaiAvanti() {
+    const salvati = localStorage.getItem('giocatori');
+    if (!salvati) {
+        alert("⚠️ Devi prima caricare e salvare un file!");
+    } else {
+        window.location.href = 'ag2.html';
+    }
+}
+</script>
+
+</body>
+</html>

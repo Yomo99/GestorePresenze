@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>AG5 - Riepilogo Partita</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e9f5ec, #f8fbf9);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 15px;
+      color: #2e7d32;
+      font-size: 22px;
+      letter-spacing: 1px;
+    }
+
+    .result {
+      font-size: 16px;
+      margin: 10px 0 20px 0;
+      color: #333;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #2e7d32;
+      color: white;
+      text-transform: uppercase;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #d0e9d2;
+    }
+
+    .btn {
+      margin-top: 20px;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 8px 20px;
+      font-size: 15px;
+      border-radius: 8px;
+      transition: 0.3s;
+      box-shadow: 0px 3px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #45a049;
+      transform: translateY(-2px);
+    }
+
+    .nav-buttons {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .nav-buttons a, .nav-buttons button {
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: 0.3s;
+      display: inline-block;
+      box-shadow: 0px 3px 6px rgba(0,0,0,0.2);
+      border: none;
+      cursor: pointer;
+    }
+
+    .indietro {
+      background-color: #e53935;
+      color: white;
+    }
+
+    .salva {
+      background-color: #43a047;
+      color: white;
+    }
+
+    .nav-buttons a:hover, .nav-buttons button:hover {
+      opacity: 0.8;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Riepilogo Partita</h1>
+
+    <div class="result" id="risultatoPartita">
+      <!-- Risultato verrà inserito qui -->
+    </div>
+
+    <table id="riepilogoTable">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Cognome</th>
+          <th>Ruolo</th>
+          <th>1° Tempo</th>
+          <th>2° Tempo</th>
+          <th>3° Tempo</th>
+          <th>Totale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dati verranno caricati qui -->
+      </tbody>
+    </table>
+
+    <div class="nav-buttons">
+      <a href="ag3.html" class="indietro">⬅️ Indietro</a>
+      <button class="salva" onclick="salvaPresenze()">💾 Salva e torna Home</button>
+    </div>
+  </div>
+
+  <script>
+    function caricaRiepilogo() {
+      const minuti = JSON.parse(localStorage.getItem('minuti')) || [];
+      const squadraAvversaria = localStorage.getItem('squadraAvversaria') || 'Sconosciuta';
+      const golFiesole = localStorage.getItem('golFiesole') || '0';
+      const golAvversari = localStorage.getItem('golAvversari') || '0';
+
+      document.getElementById('risultatoPartita').textContent = `Fiesole ${golFiesole} - ${golAvversari} ${squadraAvversaria}`;
+
+      const tbody = document.getElementById('riepilogoTable').querySelector('tbody');
+      tbody.innerHTML = '';
+
+      minuti.forEach((g) => {
+        const totale = (g.minuti1 || 0) + (g.minuti2 || 0) + (g.minuti3 || 0);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${g.nome}</td>
+          <td>${g.cognome}</td>
+          <td>${g.ruolo}</td>
+          <td>${g.minuti1 || 0}</td>
+          <td>${g.minuti2 || 0}</td>
+          <td>${g.minuti3 || 0}</td>
+          <td>${totale}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function salvaPresenze() {
+      const minuti = JSON.parse(localStorage.getItem('minuti')) || [];
+      const squadraAvversaria = localStorage.getItem('squadraAvversaria') || 'Sconosciuta';
+      const golFiesole = localStorage.getItem('golFiesole') || '0';
+      const golAvversari = localStorage.getItem('golAvversari') || '0';
+
+      const datiFinali = {
+        risultato: `Fiesole ${golFiesole} - ${golAvversari} ${squadraAvversaria}`,
+        presenze: minuti.map(g => ({
+          nome: g.nome,
+          cognome: g.cognome,
+          ruolo: g.ruolo,
+          totale: (g.minuti1 || 0) + (g.minuti2 || 0) + (g.minuti3 || 0)
+        }))
+      };
+
+      localStorage.setItem('presenzeFinali', JSON.stringify(datiFinali));
+
+      alert('✅ Dati salvati correttamente!');
+      window.location.href = 'index.html';
+    }
+
+    window.onload = caricaRiepilogo;
+  </script>
+
+</body>
+</html>

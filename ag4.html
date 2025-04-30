@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AG4 - Inserisci Squadra e Risultato</title>
+    <style>
+        /* Stili personalizzati */
+    </style>
+</head>
+<body>
+    <h1>Inserisci Squadra Avversaria e Risultato</h1>
+    <label for="squadraAvversaria">Squadra Avversaria:</label>
+    <input type="text" id="squadraAvversaria"><br><br>
+
+    <label for="risultato">Risultato:</label>
+    <input type="text" id="risultato"><br><br>
+
+    <button onclick="salvaRisultato()">Salva</button>
+    <button onclick="vaiAg3()">Indietro (AG3)</button>
+    <button onclick="vaiAg5()">Avanti (AG5)</button>
+
+    <script>
+        function salvaRisultato() {
+            let squadraAvversaria = document.getElementById('squadraAvversaria').value;
+            let risultato = document.getElementById('risultato').value;
+            localStorage.setItem('squadraAvversaria', squadraAvversaria);
+            localStorage.setItem('risultato', risultato);
+        }
+
+        function vaiAg3() {
+            window.location.href = 'ag3.html';
+        }
+
+        function vaiAg5() {
+            window.location.href = 'ag5.html';
+        }
+    </script>
+</body>
+</html>
